@@ -199,9 +199,9 @@ def setplot(plotdata=None):
         plt.subplots_adjust(left=0.12, bottom=0.06, right=0.97, top=0.97)
         surge_afteraxes(cd)
         gaugetools.plot_gauge_locations(cd.plotdata, gaugenos='all',
-                                        format_string='bx', add_labels=False)
-        gaugetools.plot_gauge_locations(cd.plotdata, gaugenos=[0, 11, 22, 10, 21, 32],
-                                        format_string='ko', add_labels=True)
+                                        format_string='ko', add_labels=False)
+        # gaugetools.plot_gauge_locations(cd.plotdata, gaugenos=range(),
+        #                                 format_string='ko', add_labels=True)
 
     plotfigure = plotdata.new_plotfigure(name="Gauge Locations")
     plotfigure.show = True
@@ -225,8 +225,7 @@ def setplot(plotdata=None):
     plotdata.printfigs = True                # print figures
     plotdata.print_format = 'png'            # file format
     plotdata.print_framenos = 'all'          # list of frames to print
-    # plotdata.print_gaugenos = 'all'        # list of gauges to print
-    plotdata.print_gaugenos = [10, 21, 32]   # list of gauges to print
+    plotdata.print_gaugenos = 'all'        # list of gauges to print
     plotdata.print_fignos = 'all'            # list of figures to print
     plotdata.html = True                     # create html files of plots?
     plotdata.latex = True                    # create latex file of plots?

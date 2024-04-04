@@ -83,13 +83,13 @@ def setrun(claw_pkg='geoclaw'):
 
     # Lower and upper edge of computational domain:
     clawdata.lower[0] = -100e3 * 10      # west longitude
-    clawdata.upper[0] =  100e3 * 10 * 2     # east longitude
+    clawdata.upper[0] =  100e3 * 10      # east longitude
 
     clawdata.lower[1] = -100e3 * 10     # south latitude
-    clawdata.upper[1] =  100e3 * 10    # north latitude
+    clawdata.upper[1] =  100e3 * 10     # north latitude
 
     # Number of grid cells:
-    clawdata.num_cells[0] = 300
+    clawdata.num_cells[0] = 200
     clawdata.num_cells[1] = 200
 
     # ---------------
@@ -239,7 +239,7 @@ def setrun(claw_pkg='geoclaw'):
     #   2 => periodic (must specify this at both boundaries)
     #   3 => solid wall for systems where q(2) is normal velocity
 
-    clawdata.bc_lower[0] = 'wall'
+    clawdata.bc_lower[0] = 'extrap'
     clawdata.bc_upper[0] = 'extrap'
 
     clawdata.bc_lower[1] = 'wall'
@@ -323,23 +323,48 @@ def setrun(claw_pkg='geoclaw'):
     regions = rundata.regiondata.regions
     # to specify regions of refinement append lines of the form
     #  [minlevel,maxlevel,t1,t2,x1,x2,y1,y2]
-    num_gauges = 11
-    for i in range(num_gauges):
-        n = i + num_gauges * 2
-        rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
-                                            -250e3, 
-                                            rundata.clawdata.t0, rundata.clawdata.tfinal])
-        n = i
-        rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
-                                            0.0, 
-                                            rundata.clawdata.t0, rundata.clawdata.tfinal])
-        n = i + num_gauges
-        rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
-                                            250e3, 
-                                            rundata.clawdata.t0, rundata.clawdata.tfinal])
+    # Grid gauges
+    # num_gauges = 11
+    # for i in range(num_gauges):
+        # n = i + num_gauges * 2
+        # rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
+        #                                     -250e3, 
+        #                                     rundata.clawdata.t0, rundata.clawdata.tfinal])
+        # n = i
+        # rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
+        #                                     0.0, 
+        #                                     rundata.clawdata.t0, rundata.clawdata.tfinal])
+        # n = i + num_gauges
+        # rundata.gaugedata.gauges.append([n, 2000e3 / (num_gauges - 1) * (i - 0.0), 
+        #                                     250e3, 
+        #                                     rundata.clawdata.t0, rundata.clawdata.tfinal])
 
-    rundata.gaugedata.gauges.append([100, -100e3, 0.0,
-                                            rundata.clawdata.t0, rundata.clawdata.tfinal])
+    # Left boundary
+    rundata.gaugedata.gauges.append([0, rundata.clawdata.lower[0], 0.0,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+    # Centered cross
+    rundata.gaugedata.gauges.append([1, -100e3, 0.0,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+    rundata.gaugedata.gauges.append([2, 0.0, 0.0,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+    rundata.gaugedata.gauges.append([3, 100e3, 0.0,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+    rundata.gaugedata.gauges.append([4, 0.0, -100e3,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+    rundata.gaugedata.gauges.append([5, 0.0,  100e3,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+
+    # Right boundary
+    rundata.gaugedata.gauges.append([6, rundata.clawdata.upper[0], 0.0,
+                                     rundata.clawdata.t0, 
+                                     rundata.clawdata.tfinal])
+
 
     # Force the gauges to also record the wind and pressure fields
     rundata.gaugedata.aux_out_fields = [4, 5, 6]
@@ -380,6 +405,8 @@ def setgeo(rundata):
     # to 0.28
     geo_data.sea_level = 0.0
     geo_data.dry_tolerance = 1.e-2
+
+    geo_data.alpha_bc = 0.0
 
     # Refinement Criteria
     refine_data = rundata.refinement_data
@@ -438,7 +465,8 @@ def setgeo(rundata):
     def storm_x(t):
         # storm_v = 10e3
         storm_v = 0
-        return -50e3 + storm_v * t / 60**2
+        storm_x0 = 0.0
+        return 0.0 + storm_v * t / 60**2
 
 
     storm.eye_location = numpy.array([[storm_x(t), 0.0] for t in storm.t])

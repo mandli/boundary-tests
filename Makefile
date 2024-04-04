@@ -58,6 +58,7 @@ SOURCES = \
   ./rpn2_geoclaw.f \
   ./src2.f90 \
   ./setprob.f90 \
+  ./bc2amr.f90 \
   $(RIEMANN)/rpt2_geoclaw.f \
   $(RIEMANN)/geoclaw_riemann_utils.f
 

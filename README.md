@@ -1,4 +1,3 @@
-# well-balanced-pressure
-Examples for the well-balancing of external pressure forcing in a shallow water regime.
-
-Paper to appear...
+# Boundary Tests
+Tests for determining issues with boundary conditions and atmospheric forcing
+common to storm surge.
