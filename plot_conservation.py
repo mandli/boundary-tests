@@ -36,23 +36,47 @@ def parse_amr_log(path=None):
 
 def plot_conservation(base_path):
 
-    names = ["all_extrap", "all_wall", "hi_wall", "lo_wall", "channel"]
-    data = []
-    figs = []
-    for (i, name) in enumerate(names):
-        data = parse_amr_log(os.path.join(base_path, "%s_output" % name, 
-                                                     "fort.amr"))
+    # boundary_configs = {'channel':    [['extrap', 'extrap'], 
+    #                                    ['wall', 'wall']],
+    #                     'all_wall':   [['wall', 'wall'], 
+    #                                    ['wall', 'wall']],
+                        # 'all_extrap': [['extrap', 'extrap'], 
+                        #                ['extrap', 'extrap']],
+                        # 'lo_wall':    [['wall', 'extrap'], 
+                        #                ['wall', 'wall']],
+                        # 'hi_wall':    [['extrap', 'wall'], 
+                        #                ['wall', 'wall']],
+                        # }
 
-        # Plot mass
-        figs.append(plt.figure())
-        axes = figs[-1].add_subplot(1, 1, 1)
-        # axes.plot(data[0], data[1] / data[1][0] - 1.0, 'b-', label='Mass')
-        # axes.plot(data[0], data[3] / data[1][0], 'r--', label='Difference')
-        axes.plot(data[0], data[1] / data[1][0] - 1.0, 'b-', label='Mass')
-        axes.plot(data[0], data[3] / data[1][0], 'r--', label='Difference')
-        axes.ticklabel_format(style="plain", useMathText=True)
-        axes.set_title("Mass - %s" % name)
-        axes.legend()
+    boundary_configs = ['channel', 'all_wall']
+    alphas = range(11)
+    line_style = ['-', '--']
+
+    fig = plt.figure()
+    axes = fig.add_subplot(1, 1, 1)
+    axes.ticklabel_format(style="plain", useMathText=True)
+    axes.set_title("Mass Conservation")
+    
+    for (i, name) in enumerate(boundary_configs):
+        data = parse_amr_log(os.path.join(base_path, 
+                        "%s_%s_output" % (name, str(int(0)).zfill(2)), 
+                        "fort.amr"))
+        axes.plot(data[0], data[1] / data[1][0] - 1.0, '-', label='Mass', 
+                                linestyle=line_style[i], color="blue")
+        print("Mass Max, Diff = (%s, %s)" % (numpy.max(data[1]), numpy.max(data[3])))
+        for alpha in alphas[1:-1]:
+            data = parse_amr_log(os.path.join(base_path, 
+                            "%s_%s_output" % (name, str(int(alpha)).zfill(2)), 
+                            "fort.amr"))
+            axes.plot(data[0], data[1] / data[1][0] - 1.0, '-', label='Mass', 
+                                    linestyle=line_style[i], color="lightgray")
+            print("Mass Max, Diff = (%s, %s)" % (numpy.max(data[1]), numpy.max(data[3])))
+        
+        data = parse_amr_log(os.path.join(base_path, 
+                        "%s_%s_output" % (name, str(int(10)).zfill(2)), 
+                        "fort.amr"))
+        axes.plot(data[0], data[1] / data[1][0] - 1.0, '-', label='Mass', 
+                                linestyle=line_style[i], color="red")
         print("Mass Max, Diff = (%s, %s)" % (numpy.max(data[1]), numpy.max(data[3])))
 
     # figs.append(plt.figure())
@@ -87,7 +111,7 @@ def plot_conservation(base_path):
     # axes.ticklabel_format(style="plain", useMathText=True)
     # axes.set_title("Momentum Difference")
 
-    return figs
+    return fig
 
 
 if __name__ == '__main__':
