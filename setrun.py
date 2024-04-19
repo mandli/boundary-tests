@@ -30,18 +30,25 @@ def days2seconds(days):
 # Scratch directory for storing topo and storm files:
 scratch_dir = os.path.join(os.environ["CLAW"], 'geoclaw', 'scratch')
 
-class PressureData(data.ClawData):
-    r""""""
+class BCTestData(data.ClawData):
+
     def __init__(self):
-        super(PressureData, self).__init__()
+        super(BCTestData, self).__init__()
 
-        # GeoClaw physics parameters
-        self.add_attribute('split_pressure', False)
+        # Incoming wave momentum flux modification
+        # alpha \in [0, 1]
+        #   alpha = 0:      Incoming momentum is zero
+        #   0 < alpha < 1:  Incoming momentum is decayed from zero-order extrapolated value
+        #   alpha = 1:      Incoming momentum is zero-order extrapolated
+        self.add_attribute('alpha_bc', 1.0)
 
-    def write(self,data_source='setrun.py', out_file='pressure.data'):
+
+    def write(self, data_source='setrun.py', out_file='bc_test.data'):
 
         self.open_data_file(out_file, data_source)
-        self.data_write('split_pressure', description="(Use split pressure)")
+        self.data_write('alpha_bc',
+                        description="(Incoming momentum flux modification)")
+
         self.close_data_file()
 
 # ------------------------------
@@ -406,8 +413,6 @@ def setgeo(rundata):
     geo_data.sea_level = 0.0
     geo_data.dry_tolerance = 1.e-2
 
-    geo_data.alpha_bc = 0.0
-
     # Refinement Criteria
     refine_data = rundata.refinement_data
     refine_data.wave_tolerance = 1.0
@@ -497,10 +502,9 @@ def setgeo(rundata):
     # Write out storm
     storm.write(data.storm_file, file_format='geoclaw')
 
-
-    # Pressure source term splitting
-    rundata.add_data(PressureData(), 'pressure_data')
-    rundata.pressure_data.split_pressure = False
+    # BC Test source term splitting
+    rundata.add_data(BCTestData(), 'bc_test_data')
+    rundata.bc_test_data.alpha_bc = 0.0
 
     return rundata
     # end of function setgeo

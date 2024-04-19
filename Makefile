@@ -35,12 +35,10 @@ include $(GEOLIB)/Makefile.geoclaw
 #  under a different name is provided)
 # ---------------------------------------
 
-EXCLUDE_MODULES = \
-  model_storm_module.f90 \
-  storm_module.f90
+EXCLUDE_MODULES = 
 
 EXCLUDE_SOURCES = \
-  src2.f90 \
+  bc2amr.f90 \
   setprob.f90
 
 # ----------------------------------------
@@ -50,15 +48,12 @@ EXCLUDE_SOURCES = \
 RIEMANN = $(CLAW)/riemann/src
 
 MODULES = \
-  ./model_storm_module.f90 \
-  ./storm_module.f90 \
-  ./pressure_module.f90
+  ./bc_module.f90
 
 SOURCES = \
-  ./rpn2_geoclaw.f \
-  ./src2.f90 \
-  ./setprob.f90 \
   ./bc2amr.f90 \
+  ./setprob.f90 \
+  $(RIEMANN)/rpn2_geoclaw.f \
   $(RIEMANN)/rpt2_geoclaw.f \
   $(RIEMANN)/geoclaw_riemann_utils.f
 

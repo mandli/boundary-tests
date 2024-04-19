@@ -91,7 +91,7 @@ subroutine bc2amr(val,aux,nrow,ncol,meqn,naux, hx, hy, level, time,   &
     use amr_module, only: mthbc, xlower, ylower, xupper, yupper
     use amr_module, only: xperdom,yperdom,spheredom
 
-    use geoclaw_module, only: alpha_bc
+    use bc_module, only: alpha_bc
 
     implicit none
 
@@ -245,7 +245,7 @@ subroutine bc2amr(val,aux,nrow,ncol,meqn,naux, hx, hy, level, time,   &
                         val(1,i,j) = val(1, i, nyb + 1)
 
                         val(2,i,j) = val(2, i, nyb + 1)
-                        if (val(3, i, nyb + 1) > 0.d0) then ! Outgoing
+                        if (val(3, i, nyb + 1) < 0.d0) then ! Outgoing
                             val(3, i, j) = val(3, i, nyb + 1)
                         else ! Incoming
                             val(3, i, j) = alpha_bc * val(3, i, nyb + 1)
@@ -301,7 +301,7 @@ subroutine bc2amr(val,aux,nrow,ncol,meqn,naux, hx, hy, level, time,   &
                         val(1, i, j) = val(1, i, jbeg - 1)
 
                         val(2,i,j) = val(2, i, jbeg - 1)
-                        if (val(3, i, jbeg - 1) < 0.d0) then ! Outgoing
+                        if (val(3, i, jbeg - 1) > 0.d0) then ! Outgoing
                             val(3, i, j) = val(3, i, jbeg - 1)
                         else ! Incoming
                             val(3, i, j) = alpha_bc * val(3, i, jbeg - 1)

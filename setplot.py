@@ -71,7 +71,7 @@ def setplot(plotdata=None):
     # ==========================================================================
     regions = {"Full Domain": {"xlimits": (clawdata.lower[0], clawdata.upper[0]),
                                "ylimits": (clawdata.lower[1], clawdata.upper[1]),
-                               "figsize": (6.4 * 2, 4.8)}, 
+                               "figsize": (6.4, 4.8)}, 
               }
 
     for (name, region_dict) in regions.items():

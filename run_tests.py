@@ -28,7 +28,7 @@ class BoundaryJob(batch.batch.Job):
             self.rundata.clawdata.bc_lower[n] = config[n][0]
             self.rundata.clawdata.bc_upper[n] = config[n][1]
 
-        self.rundata.geo_data.alpha_bc = alpha
+        self.rundata.bc_test_data.alpha_bc = alpha
 
     def __str__(self):
         output = super(BoundaryJob, self).__str__()
@@ -37,7 +37,7 @@ class BoundaryJob(batch.batch.Job):
                                                     self.rundata.clawdata.bc_upper[0])
         output += "\n          y_bcs = (%s, %s)" % (self.rundata.clawdata.bc_lower[1],
                                                     self.rundata.clawdata.bc_upper[1])
-        output += "\n  alpha_bc = %s" % self.rundata.geo_data.alpha_bc
+        output += "\n  alpha_bc = %s" % self.rundata.bc_test_data.alpha_bc
         return output
 
 
@@ -54,16 +54,17 @@ class BoundaryJob(batch.batch.Job):
 if __name__ == '__main__':
 
     jobs = []
-    boundary_configs = {'all_extrap': [['extrap', 'extrap'], 
-                                       ['extrap', 'extrap']],
+    boundary_configs = {
                         'all_wall':   [['wall', 'wall'], 
-                                       ['wall', 'wall']],
-                        'lo_wall':    [['wall', 'extrap'], 
-                                       ['wall', 'wall']],
-                        'hi_wall':    [['extrap', 'wall'], 
                                        ['wall', 'wall']],
                         'channel':    [['extrap', 'extrap'], 
                                        ['wall', 'wall']],
+                        # 'all_extrap': [['extrap', 'extrap'], 
+                        #                ['extrap', 'extrap']],
+                        # 'lo_wall':    [['wall', 'extrap'], 
+                        #                ['wall', 'wall']],
+                        # 'hi_wall':    [['extrap', 'wall'], 
+                        #                ['wall', 'wall']],
                        }
     for [name, config] in boundary_configs.items():
         for alpha in range(11):
